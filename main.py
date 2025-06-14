@@ -1,25 +1,21 @@
 import math
 
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.slider import Slider
 from kivy.uix.switch import Switch
 from kivy.uix.progressbar import ProgressBar
-from kivy.uix.image import Image
-from kivy.clock import Clock
 from kivy.app import App
 from kivy.uix.image import Image
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 from PIL import Image as PILImage
-import io
 from kivy.core.audio import SoundLoader
 from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Color, Rectangle
-class MyLayout(BoxLayout):
+
+class MyLayout(BoxLayout): # Шаблон расположения виджитов, который мы заполняем всеми виджитами
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         with self.canvas.before:
@@ -29,25 +25,25 @@ class MyLayout(BoxLayout):
 
 
 
-class MyProgressBar(ProgressBar):
+class MyProgressBar(ProgressBar):  # прогресс бар, что тут еще сказать
     def __init__(self, App, **kwargs):
         super().__init__(**kwargs)
         self.touched = 0
         self.app = App
 
 
-    def on_touch_move(self, touch):
+    def on_touch_move(self, touch): # Функция, выполняющася при движении зажатой мышки по виджету
         self.touched = 10
         self.app.image.current_frame = self.value
 
-        return super().on_touch_down(touch)  # Важно для корректной работы виджетов!
+        return super().on_touch_down(touch)
 
 
-class MyImage(Image):
+class MyImage(Image):  # Своя реализация виджета-картинки, позволяющая перетаскивать его мышкой по экрану
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def on_touch_move(self, touch):
+    def on_touch_move(self, touch): # Функция, выполняющася при движении зажатой мышки по виджету
         if self.collide_point(*touch.pos):
             self.pos = (touch.x - self.width / 2, touch.y - self.height / 2)
         return super().on_touch_down(touch)
@@ -55,7 +51,7 @@ class MyImage(Image):
 
 
 
-class AnimatedGif(MyImage):
+class AnimatedGif(MyImage):  # Своя реализация виджета-картинки, позволяющая загружать GIF изображения
     def __init__(self, App, **kwargs):
         super().__init__(**kwargs)
         self.app = App
@@ -70,7 +66,7 @@ class AnimatedGif(MyImage):
         Clock.schedule_interval(self.update_frame, self.delay)
 
     def load_gif(self, filename):
-        """Загружает GIF и разбирает его на отдельные кадры"""
+        # Загружает GIF и разбирает его на отдельные кадры
         try:
             with PILImage.open(filename) as gif:
                 self.frames = []
@@ -92,7 +88,7 @@ class AnimatedGif(MyImage):
             print(f"Ошибка загрузки GIF: {e}")
 
     def update_frame(self, dt):
-        """Обновляет текущий кадр анимации"""
+        #  Обновляет текущий кадр анимации
         if not self.frames:
             return
 
@@ -117,7 +113,7 @@ class AnimatedGif(MyImage):
 
 
 
-class MyApp(App):
+class MyApp(App):  # Основной класс-приложение, которое мы запускаем
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.autorotate = True
@@ -127,7 +123,7 @@ class MyApp(App):
     def build(self):
 
         # Главный контейнер (вертикальный)
-        layout = MyLayout(orientation='vertical', spacing=10, padding=10)
+        layout = MyLayout(orientation='vertical', spacing=10, padding=10)  # Шаблон расположения виджитов, который мы заполняем всеми виджитами
 
         # 1. Метка (Label)
         self.label = Label(text="Демо Kivy", font_size=24, size_hint=(1, 0.1))
