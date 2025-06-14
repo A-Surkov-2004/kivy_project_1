@@ -1,0 +1,93 @@
+#:import Factory kivy.factory.Factory
+#:set primary_color [0.2, 0.6, 0.9, 1]  # Основной цвет (RGBA)
+
+<FancyButton>:
+
+    canvas.before:
+        Color:
+            rgba: (0.3, 0.3, 1, 1)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    BoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 20
+
+        # Кастомная панель с тенью
+        BoxLayout:
+            size_hint_y: None
+            height: "60dp"
+            canvas.before:
+                Color:
+                    rgba: 0.1, 0.1, 0.1, 0.3
+                Rectangle:
+                    pos: self.pos[0], self.pos[1] - 5
+                    size: self.size[0], 5
+                Color:
+                    rgba: primary_color
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            Label:
+                text: "Моё Крутое Приложение"
+                font_size: "24sp"
+                bold: True
+                color: 1, 1, 1, 1
+
+        # Анимированная кнопка
+        Button:
+            id: btn
+            text: root.status_text
+            background_normal: ""
+            background_color: primary_color
+            color: 1, 1, 1, 1
+            font_size: "18sp"
+            size_hint: 0.8, None
+            height: "60dp"
+            pos_hint: {"center_x": 0.5}
+            on_press: root.on_press()
+
+            canvas.after:
+                Color:
+                    rgba: 1, 1, 1, 0.3
+                Line:
+                    width: 2
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 15)
+
+        # Плавно появляющийся ProgressBar
+        ProgressBar:
+            id: progress
+            size_hint: 0.8, None
+            height: "20dp"
+            pos_hint: {"center_x": 0.5}
+            max: root.counter+10
+            value: root.counter if root.counter < 100 else 100
+
+            canvas.before:
+                Color:
+                    rgba: 0.8, 0.8, 0.8, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: 0, 0.7, 0.3, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.width * (self.value / self.max), self.height
+
+        # Текст с эффектом перехода
+        Label:
+            text: "Счётчик: {}".format(root.counter)
+            font_size: "24sp"
+            opacity: 0 if root.counter == 0 else 1  # Плавное появление
+            color: 0.3, 0.3, 0.3, 1
+
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 5 if root.counter % 2 == 0 else -5
+                    origin: self.center
+            canvas.after:
+                PopMatrix
